@@ -44,7 +44,7 @@ jobs:
 
       - name: Deploy to server (optional)
         run: |
-          ssh -o StrictHostKeyChecking=no user@your-server-ip << 'EOF'
+          ssh -o StrictHostKeyChecking=administrator@118.221.210.154 << 'EOF'
             # Pull the latest Docker image from Docker Hub
             docker pull ${{ secrets.DOCKER_USERNAME }}/spring-boot-docker:latest
 

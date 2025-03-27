@@ -16,7 +16,7 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'  # or 'zulu', 'adopt', etc.
+          distribution: 'temurin'
           java-version: '21'
 
       - name: Grant execute permission for gradlew
@@ -42,9 +42,13 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/spring-boot-docker:latest
 
-      - name: Deploy to server (optional)
-        run: |
-          ssh -o StrictHostKeyChecking=administrator@118.221.210.154 << 'EOF'
+      - name: Deploy to server using appleboy SSH Action
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: 118.221.210.154
+          username: administrator
+          password: 593mutron!
+          script: |
             # Pull the latest Docker image from Docker Hub
             docker pull ${{ secrets.DOCKER_USERNAME }}/spring-boot-docker:latest
 
@@ -53,10 +57,3 @@ jobs:
 
             # Start the new container with Docker Compose
             docker-compose up -d
-          EOF
-        env:
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}

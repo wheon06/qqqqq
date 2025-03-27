@@ -41,3 +41,22 @@ jobs:
           file: Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/spring-boot-docker:latest
+
+      - name: Deploy to server (optional)
+        run: |
+          ssh -o StrictHostKeyChecking=no user@your-server-ip << 'EOF'
+            # Pull the latest Docker image from Docker Hub
+            docker pull ${{ secrets.DOCKER_USERNAME }}/spring-boot-docker:latest
+
+            # Stop and remove the existing container
+            docker-compose down
+
+            # Start the new container with Docker Compose
+            docker-compose up -d
+          EOF
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
